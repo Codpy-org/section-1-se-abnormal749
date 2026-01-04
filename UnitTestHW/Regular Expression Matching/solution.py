@@ -1,28 +1,20 @@
 class Solution:
     # 應輸入s、p，輸出bool
     def isMatch(self, s: str, p: str) -> bool:
-        # 不須懂
-        def sol(s, p, bp):
-            if s=="" and p=="":
-                return True
-            if p=="":
-                return False
-            if s=="":
-                if len(p) > 1 and p[1] == "*":
-                    return sol(s, p[2:], "*")
-                return False
-            if p[0]==".":
-                return sol(s[1:], p[1:], ".")
-            elif p[0]=="*":
-                if bp == ".":
-                    return sol(s[1:], p, bp) or sol(s[1:], p[1:], "*")
-                if bp != s[0]: 
-                    return sol(s, p[1:], "*")
-                return sol(s[1:], p, bp) or sol(s[1:], p[1:], "*")
-            else:
-                if s[0] == p[0]:
-                    if len(p) > 1 and p[1] == "*":
-                        return sol(s[1:], p[1:], p[0]) or sol(s, p[1:], p[0])
-                    return sol(s[1:], p[1:], p[0])
-                return sol(s, p[1:], p[0])
-        return sol(s, p, "")
+        m = len(s)
+        n = len(p)
+        dp = [[False] * (n + 1) for _ in range(m + 1)]
+        dp[0][0] = True
+        for j in range(2, n + 1):
+            if p[j - 1] == "*":
+                dp[0][j] = dp[0][j - 2]
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if p[j - 1] == "*":
+                    dp[i][j] = dp[i][j - 2]
+                    if p[j - 2] == "." or p[j - 2] == s[i - 1]:
+                        dp[i][j] = dp[i][j] or dp[i - 1][j]
+                else:
+                    if p[j - 1] == "." or p[j - 1] == s[i - 1]:
+                        dp[i][j] = dp[i - 1][j - 1]
+        return dp[m][n]
