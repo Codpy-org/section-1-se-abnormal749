@@ -1,4 +1,13 @@
-version: '3'
-
+version: "3.8"
 services:
   web:
+    container_name: codpy-webser
+    build: ./web
+    working_dir: /app
+    volumes:
+      - ./web:/app
+    ports:
+      - "5000:5000"
+    command: python /app/main.py
+
+
